@@ -30,22 +30,33 @@ document.addEventListener("DOMContentLoaded", () => {
             <strong>Participants:</strong>
             <ul>
               ${details.participants
-                .map(
-                  (participant) => `
+                .map((participant) => {
+                  const escapeHtml = (value) =>
+                    String(value)
+                      .replaceAll("&", "&amp;")
+                      .replaceAll("<", "&lt;")
+                      .replaceAll(">", "&gt;")
+                      .replaceAll('"', "&quot;")
+                      .replaceAll("'", "&#39;");
+
+                  const safeParticipant = escapeHtml(participant);
+                  const safeName = escapeHtml(name);
+
+                  return `
                     <li>
-                      <span>${participant}</span>
+                      <span>${safeParticipant}</span>
                       <button
                         type="button"
                         class="remove-participant"
-                        data-activity="${name}"
-                        data-participant="${participant}"
-                        aria-label="Unregister ${participant} from ${name}"
+                        data-activity="${safeName}"
+                        data-participant="${safeParticipant}"
+                        aria-label="Unregister ${safeParticipant} from ${safeName}"
                         title="Unregister participant"
                       >
                         &times;
                       </button>
-                    </li>`
-                )
+                    </li>`;
+                })
                 .join("")}
             </ul>
           </div>
